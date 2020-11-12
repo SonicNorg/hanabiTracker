@@ -1,31 +1,22 @@
-import kotlinx.css.padding
 import kotlinx.css.paddingBottom
 import kotlinx.css.paddingTop
 import kotlinx.css.px
-import kotlinx.html.InputType
-import kotlinx.html.js.onChangeFunction
-import org.w3c.dom.HTMLInputElement
-import react.RBuilder
-import react.RComponent
-import react.RProps
-import react.RState
-import react.dom.div
-import react.dom.img
+import react.*
 import styled.css
 import styled.styledDiv
-import styled.styledInput
 
 external interface WelcomeProps : RProps {
-    var name: String
+    var shift: Boolean
+    var count: Int
 }
 
-data class WelcomeState(val name: String) : RState
+data class WelcomeState(var shift: Boolean, var count: Int) : RState
 
 @JsExport
 class Welcome(props: WelcomeProps) : RComponent<WelcomeProps, WelcomeState>(props) {
 
     init {
-        state = WelcomeState(props.name)
+        state = WelcomeState(props.shift, props.count)
     }
 
     override fun RBuilder.render() {
@@ -34,10 +25,11 @@ class Welcome(props: WelcomeProps) : RComponent<WelcomeProps, WelcomeState>(prop
                 paddingTop = 50.px
                 paddingBottom = 50.px
             }
-            for (i in 1..5) {
-                styledDiv {
-                    css {
-                        +WelcomeStyles.unknownCard
+            for(i in 1..state.count) {
+                child(Card::class) {
+                    attrs {
+                        color = Color.UNKNOWN
+                        name = Value.UNKNOWN
                     }
                 }
             }

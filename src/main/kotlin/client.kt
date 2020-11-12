@@ -7,7 +7,16 @@ fun main() {
         render(document.getElementById("root")) {
             child(Welcome::class) {
                 attrs {
-                    name = "Kotlin/JS"
+                    count = 5
+                    shift = true
+                }
+            }
+        }
+        render(document.getElementById("settings")) {
+            child(Settings::class) {
+                attrs {
+                    count = 5
+                    shift = true
                 }
             }
         }
