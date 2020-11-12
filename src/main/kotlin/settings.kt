@@ -11,24 +11,13 @@ import react.dom.select
 import styled.css
 import styled.styledDiv
 
-external interface SettingsProps : RProps {
-    var shift: Boolean
-    var cards: Int
-    var cardsCallback: (Int) -> Unit
-    var shiftCallback: (Boolean) -> Unit
-}
-
-data class SettingsState(
-    val shift: Boolean,
-    val cards: Int,
-    val cardsCallback: (Int) -> Unit,
-    val shiftCallback: (Boolean) -> Unit
-) : RState
-
 @JsExport
-class Settings(props: SettingsProps) : RComponent<SettingsProps, SettingsState>() {
+class Settings(props: WelcomeProps) : RComponent<WelcomeProps, WelcomeState>() {
+    val shiftCallback = props.cbacks.shiftCallback
+    val cardsCallback = props.cbacks.cardsCallback
+
     init {
-        state = SettingsState(props.shift, props.cards, props.cardsCallback, props.shiftCallback)
+        state = WelcomeState(props.shift, props.count)
     }
 
     override fun RBuilder.render() {
@@ -49,10 +38,10 @@ class Settings(props: SettingsProps) : RComponent<SettingsProps, SettingsState>(
                         +"⇚ Справа налево ⇚"
                     }
                     attrs {
-                        value = if (props.shift) "1" else "2"
+                        value = if (state.shift) "1" else "2"
                         onChangeFunction = {
-                            setState(SettingsState(it.target.asDynamic()["value"] as String == "1", state.cards, state.cardsCallback, state.shiftCallback))
-//                            state.shiftCallback(it.target.asDynamic()["value"] as String == "1")
+                            setState(WelcomeState(it.target.asDynamic()["value"] as String == "1", state.count))
+                            shiftCallback(it.target.asDynamic()["value"] as String == "1")
                         }
                     }
                 }
@@ -73,10 +62,10 @@ class Settings(props: SettingsProps) : RComponent<SettingsProps, SettingsState>(
                         +"4"
                     }
                     attrs {
-                        value = props.cards.toString()
+                        value = state.count.toString()
                         onChangeFunction = {
-                            setState(SettingsState(state.shift, (it.target.asDynamic()["value"] as String).toInt(), state.cardsCallback, state.shiftCallback))
-//                            state.cardsCallback((it.target.asDynamic()["value"] as String).toInt())
+                            setState(WelcomeState(state.shift, (it.target.asDynamic()["value"] as String).toInt()))
+                            cardsCallback((it.target.asDynamic()["value"] as String).toInt())
                         }
                     }
                 }

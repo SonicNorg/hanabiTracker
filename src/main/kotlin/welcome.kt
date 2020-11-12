@@ -1,18 +1,25 @@
+import kotlinx.browser.document
 import kotlinx.css.*
+import kotlinx.html.js.onClickFunction
+import org.w3c.dom.events.Event
 import react.*
+import react.dom.button
 import react.dom.div
+import react.dom.i
 import styled.css
 import styled.styledDiv
 
 external interface WelcomeProps : RProps {
     var shift: Boolean
     var count: Int
+    var cbacks: CBHolder
 }
 
 data class WelcomeState(
     var shift: Boolean,
     var count: Int,
-    var cards: MutableList<CardState> = defaultCards(count)
+    var cards: MutableList<CardState> = defaultCards(count),
+    var history: MutableList<MutableList<CardState>> = mutableListOf()
 ) : RState
 
 @JsExport
@@ -20,6 +27,8 @@ class Welcome(props: WelcomeProps) : RComponent<WelcomeProps, WelcomeState>(prop
 
     init {
         state = WelcomeState(props.shift, props.count)
+        props.cbacks.cardsCallback = settingsCardsCallback()
+        props.cbacks.shiftCallback = settingsShiftCallback()
     }
 
     override fun RBuilder.render() {
@@ -47,7 +56,7 @@ class Welcome(props: WelcomeProps) : RComponent<WelcomeProps, WelcomeState>(prop
                 marginBottom = 20.px
                 classes = mutableListOf("row")
             }
-            div("col-sm-6") {
+            div("col-sm-5") {
                 Color.values().forEach {
                     if (it != Color.UNKNOWN) {
                         child(ColorButton::class) {
@@ -59,7 +68,7 @@ class Welcome(props: WelcomeProps) : RComponent<WelcomeProps, WelcomeState>(prop
                     }
                 }
             }
-            div("col-sm-6") {
+            div("col-sm-5") {
                 Value.values().forEach {
                     if (it != Value.UNKNOWN) {
                         child(NumberButton::class) {
@@ -71,18 +80,29 @@ class Welcome(props: WelcomeProps) : RComponent<WelcomeProps, WelcomeState>(prop
                     }
                 }
             }
+
+            div("col-sm-1") {
+                button(classes = "btn btn-success number-button px-3") {
+                    i("fas fa-undo") {}
+                    attrs {
+                        onClickFunction = stepBack()
+                    }
+                }
+            }
         }
     }
 
     private fun cardCallback(i: Int): (CardState) -> Unit = { st: CardState -> setState { cards[i] = st } }
 
     private fun cardDelCallback(i: Int): () -> Unit = { setState {
+        history.add(0, cards.map { card -> card.copy(chosen = false) }.toMutableList())
         cards.removeAt(i)
         cards.add(CardState())
     } }
 
     private fun colorButtonCallback(cardNums: Array<Int>) = { color: Color ->
         setState {
+            history.add(0, cards.map { card -> card.copy(chosen = false) }.toMutableList())
             cards.forEachIndexed { index, i ->
                 if (cardNums.contains(index)) cards[index] = i.copy(color = color, chosen = false)
             }
@@ -91,6 +111,7 @@ class Welcome(props: WelcomeProps) : RComponent<WelcomeProps, WelcomeState>(prop
     private fun numberButtonCallback(cardNums: Array<Int>) = { value: Value ->
         console.log(cardNums)
         setState {
+            history.add(0, cards.map { card -> card.copy(chosen = false) }.toMutableList())
             cards.forEachIndexed { index, i ->
                 if (cardNums.contains(index)) cards[index] = i.copy(name = value, chosen = false)
             }
@@ -100,6 +121,16 @@ class Welcome(props: WelcomeProps) : RComponent<WelcomeProps, WelcomeState>(prop
     private fun getChosen(): Array<Int> =
         state.cards.mapIndexed { index, card -> index to card }.filter { it.second.chosen }.map { it.first }.toTypedArray()
 
+    private fun settingsCardsCallback() = { chosen: Int -> setState(WelcomeState(state.shift, chosen, defaultCards(chosen), state.history)) }
+
+    private fun settingsShiftCallback() = { chosen: Boolean -> setState(WelcomeState(chosen, state.count, defaultCards(state.count), state.history)) }
+
+    private fun stepBack(): (Event) -> Unit = { _ ->
+        if (state.history.isNotEmpty()) {
+            val last = state.history.removeFirst()
+            setState(WelcomeState(state.shift, state.count, last, state.history))
+        }
+    }
 }
 
 private fun defaultCards(size: Int): MutableList<CardState> = generateSequence { CardState() }.take(size).toMutableList()
