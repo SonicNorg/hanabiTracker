@@ -4,19 +4,19 @@ import kotlinx.browser.window
 
 fun main() {
     window.onload = {
-        render(document.getElementById("root")) {
+        render(document.getElementById("collapseOne")) {
             child(Welcome::class) {
                 attrs {
-                    count = 5
-                    shift = true
+                    count = 4
+                    shift = false
                 }
             }
         }
         render(document.getElementById("settings")) {
             child(Settings::class) {
                 attrs {
-                    count = 5
                     shift = true
+                    cards = 4
                 }
             }
         }
