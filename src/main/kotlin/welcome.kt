@@ -29,6 +29,7 @@ class Welcome(props: WelcomeProps) : RComponent<WelcomeProps, WelcomeState>(prop
         state = WelcomeState(props.shift, props.count)
         props.cbacks.cardsCallback = settingsCardsCallback()
         props.cbacks.shiftCallback = settingsShiftCallback()
+        props.cbacks.undoCallback = stepBack()
     }
 
     override fun RBuilder.render() {
@@ -53,10 +54,9 @@ class Welcome(props: WelcomeProps) : RComponent<WelcomeProps, WelcomeState>(prop
 
         styledDiv {
             css {
-                marginBottom = 20.px
-                classes = mutableListOf("row")
+                classes = mutableListOf("row buttons-row")
             }
-            div("col-sm-5") {
+            div("col-sm-6") {
                 Color.values().forEach {
                     if (it != Color.UNKNOWN) {
                         child(ColorButton::class) {
@@ -68,7 +68,7 @@ class Welcome(props: WelcomeProps) : RComponent<WelcomeProps, WelcomeState>(prop
                     }
                 }
             }
-            div("col-sm-5") {
+            div("col-sm-6") {
                 Value.values().forEach {
                     if (it != Value.UNKNOWN) {
                         child(NumberButton::class) {
@@ -77,15 +77,6 @@ class Welcome(props: WelcomeProps) : RComponent<WelcomeProps, WelcomeState>(prop
                                 value = it
                             }
                         }
-                    }
-                }
-            }
-
-            div("col-sm-1") {
-                button(classes = "btn btn-success number-button px-3") {
-                    i("fas fa-undo") {}
-                    attrs {
-                        onClickFunction = stepBack()
                     }
                 }
             }

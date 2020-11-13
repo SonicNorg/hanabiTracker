@@ -1,6 +1,7 @@
 import react.dom.render
 import kotlinx.browser.document
 import kotlinx.browser.window
+import org.w3c.dom.events.Event
 
 fun main() {
     val holder = CBHolder()
@@ -24,10 +25,19 @@ fun main() {
                 }
             }
         }
+
+        render(document.getElementById("undo")) {
+            child(UndoButton::class) {
+                attrs {
+                    cbacks = holder
+                }
+            }
+        }
     }
 }
 
 class CBHolder {
     lateinit var cardsCallback: (Int) -> Unit
     lateinit var shiftCallback: (Boolean) -> Unit
+    lateinit var undoCallback: (Event) -> Unit
 }

@@ -2,15 +2,46 @@
     padding-top: 0;
     padding-bottom: 0;
 }
-strong {
-    font-size: 18px;
+@media screen and (min-width: 768px) {
+    strong {
+        font-size: 18px;
+    }
+
+    .number-button {
+        width: 40px;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0px;
+        background-color: lightseagreen;
+    }
+
+    .buttons-row {
+        margin-bottom: 15px;
+    }
 }
-.number-button {
-    width: 40px;
-    height: 40px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 0px;
-    background-color: lightseagreen;
+
+@media screen and (max-width: 767px) {
+    strong {
+        font-size: 14px;
+    }
+
+    .number-button {
+        width: 30px;
+        height: 30px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0px;
+        background-color: lightseagreen;
+    }
+    .card-body {
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+    .buttons-row {
+        margin-bottom: 8px;
+    }
 }
+

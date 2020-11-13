@@ -22,7 +22,7 @@ class Settings(props: WelcomeProps) : RComponent<WelcomeProps, WelcomeState>() {
 
     override fun RBuilder.render() {
         div("row") {
-            label("col-sm-4") {
+            label("col-sm-5 col-md-4") {
                 +"Сдвиг карт в руке"
                 select("browser-default custom-select") {
                     option {
